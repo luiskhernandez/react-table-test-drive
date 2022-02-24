@@ -7,6 +7,16 @@ const nonePersistentColumn = (id) => ({
   Header: "Column",
   accessor: id,
 });
+
+const nonePersistentRow = (id) => ({
+  id,
+  persisted: false,
+  col1: "",
+  col2: "",
+  col3: "",
+  col4: "",
+  col5: "",
+});
 export const useDynamicTable = (initialData, initialHeaders) => {
   const [data, setData] = useImmer(initialData);
   const [columns, setColumns] = useImmer(initialHeaders);
@@ -29,6 +39,7 @@ export const useDynamicTable = (initialData, initialHeaders) => {
       }
     });
   }, []);
+
   const replaceColumn = useCallback((column, position) => {
     setColumns((draft) => {
       const keys = draft.map((i) => i.accessor);
@@ -40,19 +51,43 @@ export const useDynamicTable = (initialData, initialHeaders) => {
     });
   }, []);
 
+  const replaceRow = useCallback((row, position) => {
+    console.log("replace", position);
+    setData((draft) => {
+      draft[position] = { id: draft[position].id, ...row };
+    });
+  }, []);
+
   const removeColumn = useCallback((position) => {
     setColumns((draft) => {
       draft.splice(position, 1);
     });
   }, []);
+
+  const removeRow = useCallback((position) => {
+    setData((draft) => {
+      draft.splice(position, 1);
+    });
+  }, []);
+
   const addTempColumn = useCallback((position = null) => {
-    const tempId = uuidv4();
-    const column = nonePersistentColumn(tempId);
+    const column = nonePersistentColumn(uuidv4());
     setColumns((draft) => {
       if (position === null) {
         draft.push(column);
       } else {
         draft.splice(position, 0, column);
+      }
+    });
+  }, []);
+
+  const addTempRow = useCallback((position = null) => {
+    const row = nonePersistentRow(uuidv4());
+    setData((draft) => {
+      if (position === null) {
+        draft.push(row);
+      } else {
+        draft.splice(position, 0, row);
       }
     });
   }, []);
@@ -68,5 +103,8 @@ export const useDynamicTable = (initialData, initialHeaders) => {
     addTempColumn,
     removeColumn,
     replaceColumn,
+    addTempRow,
+    replaceRow,
+    removeRow,
   };
 };

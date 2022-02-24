@@ -1,20 +1,26 @@
 const mockData = [
   {
-    col1: "Hello mundo",
+    id: 1,
+    persisted: true,
+    col1: "Mercado Libre",
     col2: "col 2",
     col3: "World item 1",
     col4: "col 4 item 1",
     col5: "col 5 item 1",
   },
   {
-    col1: "react-table",
+    id: 2,
+    persisted: true,
+    col1: "Vercel",
     col2: "rocks",
     col3: "World item 2",
     col4: "col 4 item 2",
     col5: "col 5 item 2",
   },
   {
-    col1: "whatever",
+    id: 3,
+    persisted: true,
+    col1: "Apple",
     col2: "you want",
     col3: "World item 3",
     col4: "col 4 item 3",
@@ -25,7 +31,7 @@ const mockData = [
 export const headers = [
   {
     persisted: true,
-    Header: "Column 1",
+    Header: "Company",
     accessor: "col1", // accessor is the "key" in the data
   },
   {
