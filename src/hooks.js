@@ -92,6 +92,22 @@ export const useDynamicTable = (initialData, initialHeaders) => {
     });
   }, []);
 
+  const moveRow = useCallback((dragIndex, hoverIndex) => {
+    setData((draft) => {
+      const dragRecord = draft[dragIndex];
+      draft.splice(dragIndex, 1);
+      draft.splice(hoverIndex, 0, dragRecord);
+    });
+  }, []);
+
+  const moveColumn = useCallback((dragIndex, hoverIndex) => {
+    setColumns((draft) => {
+      const dragRecord = draft[dragIndex];
+      draft.splice(dragIndex, 1);
+      draft.splice(hoverIndex, 0, dragRecord);
+    });
+  }, []);
+
   const dataMemo = React.useMemo(() => data, [data]);
   const columnsMemo = React.useMemo(() => columns, [columns]);
 
@@ -106,5 +122,7 @@ export const useDynamicTable = (initialData, initialHeaders) => {
     addTempRow,
     replaceRow,
     removeRow,
+    moveRow,
+    moveColumn,
   };
 };

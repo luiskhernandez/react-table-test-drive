@@ -1,9 +1,18 @@
+import React from "react";
 import { useTable } from "react-table";
 import Dropdown from "./Menu";
 import { useDynamicTable } from "./hooks";
 import mockData, { headers } from "./mockData";
+import {
+  connectToDndProvider,
+  DraggableRow,
+  DraggableColumn,
+} from "./draggableUtilities";
 
-export default function App() {
+function Table() {
+  const getRowId = React.useCallback((row) => {
+    return row.id;
+  }, []);
   const {
     data,
     columns,
@@ -13,10 +22,12 @@ export default function App() {
     replaceColumn,
     removeColumn,
     addTempColumn,
+    moveRow,
+    moveColumn,
   } = useDynamicTable(mockData, headers);
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data });
+    useTable({ columns, data, getRowId });
 
   return (
     <div className="container mx-auto flex">
@@ -25,8 +36,11 @@ export default function App() {
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               <th></th>
+              <th></th>
               {headerGroup.headers.map((column, index) => (
-                <th
+                <DraggableColumn
+                  index={index}
+                  move={moveColumn}
                   {...column.getHeaderProps()}
                   style={{
                     borderBottom: "solid 3px red",
@@ -76,7 +90,7 @@ export default function App() {
                       </Dropdown>
                     </>
                   )}
-                </th>
+                </DraggableColumn>
               ))}
             </tr>
           ))}
@@ -85,7 +99,11 @@ export default function App() {
           {rows.map((row, rowIndex) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <DraggableRow
+                index={rowIndex}
+                {...row.getRowProps()}
+                move={moveRow}
+              >
                 <td>
                   <>
                     <Dropdown>
@@ -145,15 +163,19 @@ export default function App() {
                     </td>
                   );
                 })}
-              </tr>
+              </DraggableRow>
             );
           })}
         </tbody>
       </table>
-      <div>
-        data preview
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+      <div className="flex flex-col">
+        <div className="flex">
+          <pre>{JSON.stringify(data, null, 2)}</pre>
+          <pre>{JSON.stringify(columns, null, 2)}</pre>
+        </div>
       </div>
     </div>
   );
 }
+
+export default connectToDndProvider(Table);
